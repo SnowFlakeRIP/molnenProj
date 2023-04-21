@@ -3,10 +3,6 @@
         class="btn-directory"
         @click="$emit('showTargetTasks')"
     >
-        <div
-            v-bind:style="`background-color: ${directory.markcolor}`"
-            class="mark-style"
-        ></div>
         <slot></slot>
         <button
             class="delete-directory"
@@ -35,8 +31,8 @@ export default {
     align-items: center;
     gap: 10px;
 
-    width: 100%;
-    height: 40px;
+    width: 160px;
+    height: 37px;
 
     padding: 0 10px;
     border: none;
@@ -50,11 +46,11 @@ export default {
 
 }
 .btn-directory:hover{
-    min-height: 40px;
+    min-height: 37px;
     height: auto;
 
     background-color: white;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     border-radius: 4px;
 
     white-space: normal;
@@ -71,13 +67,5 @@ export default {
     cursor: pointer;
     background: none;
     border: none;
-}
-
-.mark-style{
-    flex-shrink: 0;
-
-    width: 15px;
-    height: 15px;
-    border-radius: 10px;
 }
 </style>

@@ -1,64 +1,82 @@
 <template>
     <div class="left-side">
-        <!--Показать все папки с задачами-->
-        <button
-            class="btn-directory all-tasks"
-            @click="showAllTasks"
-        >
-            <img src="@/assets/image/all-tasks.png">
-            <span>Все задачи</span>
-        </button>
-        
-        <!--Список папок-->
-        <div class="all-directories">
-            <tasks-directory
-                @showTargetTasks="showTargetTasks"
-                @deleteDirectory="deleteDirectory"
-                v-for="directory in directories" :key="directory.id"
-                :directory="directory"
+        <div class="content-container">
+            <!--Показать все папки с задачами-->
+            <button
+                class="btn-directory all-tasks"
+                @click="showAllTasks"
             >
-                <span>{{ directory.title }}</span>
-            </tasks-directory>
-        </div>
-        
-        <!--Добавить папку с задачами-->
-        <button
-            class="add-directory"
-            @click="addDirectory"
-        >
-            <img src="@/assets/image/add-directory.png">
-            <span>Добавить папку</span>
-            
+                <img src="@/assets/image/all-tasks.png" alt="">
+                <span>Все задачи</span>
+            </button>
+    
+            <!--Список папок-->
+            <div class="all-directories">
+                <tasks-directory
+                    @showTargetTasks="showTargetTasks"
+                    @deleteDirectory="deleteDirectory"
+                    v-for="directory in directories" :key="directory.id"
+                    :directory="directory"
+                >
+                    <div class="mark-style" :style="`background-color: ${directory.markcolor}`"></div>
+                    <span>{{ directory.title }}</span>
+                    
+                </tasks-directory>
+            </div>
+            <tasks-side style="display: none"
+                        :directory-task="activeDirectory"
+            ></tasks-side>
+    
+            <!--Добавить папку с задачами-->
+            <button
+                class="add-directory"
+                @click="showModalWindow"
+            >
+                <img src="@/assets/image/add-directory.png" alt="">
+                <span>Добавить папку</span>
+            </button>
             <!--Диалоговое окно-->
             <div
                 class="modal-add-directory"
             >
+                <!--Закрыть диалоговое окно-->
                 <button class="close-modal">
                     <img src="@/assets/image/close-modal.png" alt="X">
                 </button>
+                <!--Название папки-->
                 <input
                     placeholder="Название папки"
                     type="text"
                     name=""
                     id=""
                 >
-                <!--choose-color-->
+                <!--Выбор цвета марки-->
+                <div class="color-container">
+                    <choose-color
+                        v-for="color in defaultColor" :key="color.id"
+                        :current-color="color"
+                        @eraseTargetColor="eraseTargetColor"
+                    />
+                </div>
+                <!--Добавить новую папку-->
                 <button
                     class="add-directory-btn"
+                    @click="addDirectory"
                 >
                     Добавить
                 </button>
             </div>
-        </button>
+        </div>
     </div>
 </template>
 
 <script>
 import TasksDirectory from '@/components/UI/TasksDirectory.vue';
-
+import ChooseColor from '@/components/UI/ChooseColor.vue';
+import TasksSide from '@/components/TasksSide.vue';
 export default {
     components: {
-        TasksDirectory
+        TasksDirectory, ChooseColor, TasksSide
     },
     data(){
         return{
@@ -89,20 +107,38 @@ export default {
                         {description: 'Записаться в зал'},
                         {description: 'Записаться в СПА'}
                     ]},
-            ]
+            ],
+            defaultColor:[
+                {id: 1, color: '#C9D1D3', status: true}, {id: 2, color: '#42B883', status: false},
+                {id: 3, color: '#64C4ED', status: false}, {id: 4, color: '#FFBBCC', status: false},
+                {id: 5, color: '#B6E6BD', status: false}, {id: 6, color: '#C355F5', status: false},
+                {id: 7, color: '#09011A', status: false}, {id: 8, color: '#FF6464', status: false},
+            ],
+            nameNewDirectory: '',
+            colorNewDirectory: '',
+            activeDirectory: {},
         }
     },
     methods:{
         showAllTasks(){
             console.log("showAllTasks")
         },
-        showTargetTasks(){
+        showTargetTasks(directory){
+            console.log(directory)
             console.log("showTargetTasks")
+            this.activeDirectory = {
+                ...directory,
+            }
+        },
+        showModalWindow(){
+            console.log("showModalWindow")
         },
         deleteDirectory(directory){
             console.log("deleteDirectory")
             this.directories = this.directories.filter(d => d.id !== directory.id)
-
+        },
+        eraseTargetColor(){
+          console.log("ok")
         },
         addDirectory(){
             console.log("addDirectory")
@@ -114,15 +150,20 @@ export default {
 <style scoped>
 /* Сторона с папками (Общее) */
 .left-side{
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    
     width: 200px;
     height: auto;
     padding: 30px 20px;
     
     background-color: #fcf2f2;
+}
+
+.content-container{
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    
+    position: relative;
+    height: auto;
 }
 /* End */
 
@@ -131,6 +172,16 @@ export default {
 .all-directories{
     display: flex;
     flex-direction: column;
+    
+    height: auto;
+}
+
+.mark-style{
+    flex-shrink: 0;
+    
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
 }
 /* Все папки (end) */
 
@@ -167,13 +218,16 @@ export default {
     gap: 13px;
     
     position: absolute;
-    width: 220px;
+    bottom: -150px;
+    left: 10px;
+
+    width: 235px;
     height: 150px;
     padding: 17px;
     
     cursor: default;
     background: #FFFFFF;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
 }
 
@@ -197,6 +251,23 @@ export default {
     border-radius: 4px;
     
     font-size: 16px;
+}
+
+.color-container{
+    display: flex;
+    gap: 5px;
+}
+
+.add-directory-btn{
+    width: 200px;
+    height: 37px;
+    
+    background: #4DD599;
+    border-radius: 4px;
+    border: none;
+    
+    color: #FFFFFF;
+    font-size: 14px;
 }
 /* Modal window (end) */
 /* Добавление папки (end) */

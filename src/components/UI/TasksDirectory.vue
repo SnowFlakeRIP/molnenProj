@@ -1,17 +1,36 @@
 <template>
-    <button
-        class="btn-directory"
-        @click="$emit('showTargetTasks')"
-    >
-        <slot></slot>
+    <div>
         <button
-            class="delete-directory"
-            @click="$emit('deleteDirectory', directory)"
+            v-if="directory.status === false"
+            class="btn-directory"
+            @click="$emit('showTargetTasks', directory)"
         >
-            <img src="@/assets/image/delete-directory.png" alt="X">
+            <slot></slot>
+        
+            <button
+                class="delete-directory"
+                @click.stop="$emit('deleteDirectory', directory)"
+            >
+                <img src="@/assets/image/delete-directory.png" alt="X">
+            </button>
         </button>
-
-    </button>
+    
+        <button
+            v-else
+            class="btn-directory-checked"
+            @click="$emit('showTargetTasks', directory)"
+        >
+            <slot></slot>
+        
+            <button
+                class="delete-directory"
+                @click.stop="$emit('deleteDirectory', directory)"
+            >
+                <img src="@/assets/image/delete-directory.png" alt="X">
+            </button>
+        </button>
+    </div>
+    
 </template>
 
 <script>
@@ -19,13 +38,17 @@ export default {
     name: 'tasks-directory',
     props:{
         directory:{
-            type: Object
+            type: Object,
+            status: Boolean,
+            markcolor: String,
+            title: String,
+            tasks: Array
         }
     }
 };
 </script>
 
-<style>
+<style lang="scss">
 .btn-directory{
     display: flex;
     align-items: center;
@@ -39,33 +62,62 @@ export default {
     background: none;
     
     text-align: left;
-    font-size: 16px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
+    &:hover, &:focus{
+        min-height: 37px;
+        height: auto;
+    
+        background-color: #fcfbf7;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        border-radius: 4px;
+    
+        white-space: normal;
+    
+        .delete-directory{
+            display: block;
+            margin-left: auto;
+        
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+    }
+    
+    .delete-directory{
+        display: none;
+    }
 }
-.btn-directory:hover{
+
+.btn-directory-checked{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    width: 160px;
     min-height: 37px;
     height: auto;
-
+    
+    padding: 0 10px;
+    border: none;
     background-color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     border-radius: 4px;
-
+    
+    text-align: left;
     white-space: normal;
-}
-
-.btn-directory .delete-directory{
-    display: none;
-}
-
-.btn-directory:hover .delete-directory{
-    display: block;
-    margin-left: auto;
-
-    cursor: pointer;
-    background: none;
-    border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    .delete-directory{
+        display: block;
+        margin-left: auto;
+        
+        cursor: pointer;
+        background: none;
+        border: none;
+    }
 }
 </style>
